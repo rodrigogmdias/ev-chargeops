@@ -339,7 +339,7 @@ Relacionamento central: condomínio → pontos → carregadores → sessões →
 
 Backend + banco + identidade do usuário + cadastro do parque.
 
-- Backend FastAPI · PostgreSQL · Redis · Docker
+- Backend · PostgreSQL · Redis · Docker
 - Onboarding: registro, login (e-mail/OAuth), confirmação de identidade
 - LGPD: termo de consentimento + minimização + tokenização Stripe
 - Cadastro de pontos com atributo `tipo` (`condominio` | `venda`) — define o modelo de cobrança
@@ -393,7 +393,7 @@ Para definir o ponto de equilíbrio da assinatura SaaS, partimos de uma estimati
 
 ### 🛠️ Stack
 
-Python/FastAPI · PostgreSQL · Redis · React Native (Expo) · React (portal) · scikit-learn · **Stripe** (pagamentos com pré-autorização) · Google Maps/Mapbox · Docker/Railway
+Backend · PostgreSQL · Redis · App mobile · Portal web · scikit-learn (IA) · **Stripe** (pagamentos com pré-autorização) · Google Maps/Mapbox · Docker/Railway
 
 ### ✅ Critérios de sucesso
 
