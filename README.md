@@ -28,7 +28,7 @@ Hoje falta, na prática:
 - 🔍 Identificar quem carregou e quanto consumiu (kWh)
 - 💰 Cobrar de forma transparente
 - 📊 Dar visibilidade ao gestor e ao morador
-- ⚡ **Gerenciar a capacidade elétrica do prédio** — quando vários carregadores ligam ao mesmo tempo, a soma das potências pode ultrapassar a demanda contratada da concessionária; cada ponto entrega menos kW e o gestor não enxerga que precisa aumentar a carga
+- ⚡ Gerenciar a capacidade elétrica do prédio — quando vários carregadores ligam ao mesmo tempo, a soma das potências pode ultrapassar a demanda contratada da concessionária; cada ponto entrega menos kW e o gestor não enxerga que precisa aumentar a carga
 
 **Cenário adotado:** condomínio residencial com carregador compartilhado, extensível a edifícios corporativos e campus.
 
