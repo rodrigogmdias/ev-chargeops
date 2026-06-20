@@ -70,6 +70,7 @@ Formulário aplicado a **10 motoristas de EV/híbridos plug-in** (26/05–09/06/
 4. **Plataforma única por condomínio** — elimina app por operador
 5. **Sessão interrompida** — registrar kWh parcial e notificar o usuário
 6. **Previsão de custo e tarifa dinâmica** — exibir preço antes de carregar; IA ajusta tarifa por demanda do ponto
+7. **Limite elétrico do condomínio** — quando vários carregadores ligam ao mesmo tempo, a potência por ponto cai; portal precisa mostrar quanto da capacidade contratada está sendo usada e indicar quando aumentar a demanda na concessionária
 
 ### Complemento — Dados públicos (Opção C parcial) 📈
 
@@ -137,7 +138,24 @@ Três APIs: OpenAPI, Real-time Monitoring e Remote Control. Autenticação via `
 | 🏢 **Pós-pago** | Condomínio | Morador recarrega sem pagar no app. No fechamento do mês, gestor exporta relatório por unidade e anexa à conta condominial. |
 | 💳 **Pré-pago** | Rede comercial | Morador cadastra cartão na **Stripe**. Ao encerrar a sessão, backend cobra via PaymentIntent e emite recibo no app. |
 
-**🖥️ Portal do condomínio (gestor):** consumo por unidade/morador, exportação PDF/CSV, fechamento mensal para cobrança na taxa condominial.
+**🖥️ Portal do condomínio (gestor):** consumo por unidade/morador, exportação PDF/CSV, fechamento mensal para cobrança na taxa condominial e **painel de capacidade elétrica** (ver abaixo).
+
+### ⚡ Balanceamento de carga e capacidade contratada
+
+O condomínio contrata uma **demanda (kW)** junto à concessionária. Quando vários carregadores operam em paralelo, a soma das potências pode ultrapassar esse limite — então o HCA G2 (balanceamento dinâmico OCPP) **reduz a potência entregue por ponto** para proteger a instalação. Resultado: cada morador recebe menos kW e a sessão demora mais.
+
+O portal expõe esse comportamento ao gestor:
+
+| Indicador | O que mostra |
+|---|---|
+| Demanda contratada (kW) | Limite acordado com a concessionária |
+| Demanda instantânea (kW) | Soma das potências em uso pelos carregadores |
+| % de utilização | Demanda instantânea ÷ demanda contratada |
+| Potência efetiva por ponto | kW real entregue vs. kW nominal do carregador |
+| Eventos de throttling | Quantas vezes/quanto tempo houve redução automática |
+| Recomendação de upgrade | Alerta quando a utilização média ultrapassa 80% em horário de pico |
+
+**Exemplo:** 10 carregadores de 7 kW = 70 kW nominais. Se a demanda contratada é 45 kW, o sistema reparte 4,5 kW por ponto e o painel sinaliza **utilização 100% + sugestão de aumentar demanda para 75 kW** com base no histórico de uso simultâneo.
 
 **Wireframe do app:**
 
@@ -174,6 +192,7 @@ A IA é o **motor de precificação dinâmica** da plataforma — principal dife
 | Clustering de perfis | K-Means | Mapear padrões de uso por ponto (pico noturno, fim de semana) |
 | Detecção de anomalias | Isolation Forest | Sessões atípicas ou uso indevido |
 | Previsão de custo | Regressão | Exibir preço estimado no app antes de iniciar a recarga |
+| Previsão de capacidade | Séries temporais | Projetar demanda futura e recomendar aumento da carga contratada na concessionária |
 
 **Entradas do modelo de precificação:** taxa de ocupação do ponto, tamanho da fila, horário, dia da semana, histórico de sessões, potência disponível.
 
@@ -203,7 +222,8 @@ Relacionamento central: condomínio → carregadores e unidades → usuários �
 | 4 | App: mapa, sessão ativa, histórico |
 | 5 | App: cartão (**Stripe**) + cobrança por sessão (pré-pago) |
 | 6 | Portal: relatório por unidade + exportação PDF/CSV |
-| 7 | IA: precificação dinâmica + deploy |
+| 7 | Portal: painel de capacidade elétrica (demanda contratada × instantânea + throttling) |
+| 8 | IA: precificação dinâmica + previsão de capacidade + deploy |
 
 **Stack:** Python/FastAPI · PostgreSQL · Redis · React Native (Expo) · React (portal) · scikit-learn · **Stripe** (pagamentos) · Docker/Railway
 
@@ -214,6 +234,7 @@ Relacionamento central: condomínio → carregadores e unidades → usuários �
 - [ ] Pós-pago: uso sem pagamento no app + exportação no portal
 - [ ] Pré-pago: cartão cadastrado via Stripe + cobrança ao encerrar sessão
 - [ ] Precificação dinâmica por ponto (tarifa varia conforme demanda)
+- [ ] Painel de capacidade elétrica com alerta de upgrade de demanda contratada
 - [ ] Ao menos um modelo de IA em produção (precificação ou anomalias)
 
 ---
