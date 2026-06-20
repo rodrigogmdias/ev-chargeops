@@ -124,14 +124,36 @@ São Paulo é mercado prioritário: **30,6% das vendas nacionais** + **única le
 
 ### 📜 Marco regulatório
 
-| Norma | O que estabelece | Impacto no produto |
+> **Posicionamento estratégico:** o EV ChargeOps se posiciona deliberadamente como **camada de software de gestão** — **não** como instalador, distribuidora ou comercializadora de energia. As responsabilidades regulatórias mais pesadas (instalação física, segurança contra incêndio, comunicação à distribuidora) permanecem com o condomínio, o profissional habilitado e a administradora. Isso é decisão de escopo, não lacuna.
+
+| Norma | Esfera | Status | O que estabelece | Impacto no produto |
+|---|---|---|---|---|
+| **ANEEL RN 1.000/2021** (art. 2º, XV) | Federal | Vigente | Define "estação de recarga" e trata recarga como **serviço livre**, sem outorga. Exige comunicação prévia à distribuidora ao instalar; protocolos abertos em uso não exclusivamente privado. | Condomínio **não pode comercializar energia com margem** — só repassa custo do kWh. Plataforma é remunerada como **SaaS**, não como distribuidor. Portal pode gerar automaticamente o comunicado à distribuidora. |
+| **Lei 14.874/2024** (federal) | Federal | Vigente | Reforça medição individualizada em condomínios. | Justifica o rateio por kWh por usuário. |
+| **CP ANEEL 42/2025** | Federal | **Em formação** | Revisão das regras de **conexão de carregadores à rede de distribuição** (encerrada 10/03/2026, sem texto final). | **Risco regulatório a monitorar** — arquitetura deve acomodar mudança de requisitos técnicos sem redesenho estrutural. |
+| **PL 158/2025** | Federal | Tramitação inicial (CCJC) | Tentativa de base federal equivalente à Lei SP. Aguardando relator. | Acompanhar — pode acelerar adoção em todo o país. |
+| **Lei Estadual 18.403/2026-SP** (Alesp) | Estadual | Vigente (18/02/2026) | Direito do condômino de instalar carregador às próprias expensas em vaga privativa. Requisitos: compatibilidade elétrica, normas da distribuidora e ABNT, **profissional habilitado (ART/RRT)** e **comunicação formal prévia à administração**. Art. 2º: novos empreendimentos devem prever capacidade elétrica mínima. | **Gatilho regulatório** da demanda. Portal pode registrar o ART/RRT e o comunicado à administração — viraliza adoção em assembleia. |
+| **Portaria CCB 003/970/2026** (IT-41) | Estadual | Vigente (17/03/2026) | Segurança contra incêndio para SAVE em garagens. Apenas **Modos 3 (AC) e 4 (DC)** em áreas internas (NBR IEC 61851-1). Responsabilidade técnica integral do instalador; chave de desligamento de emergência; sinalização padronizada. Vistoria CBPMESP a partir da renovação do AVCB. | Elimina concorrência "tomada comum" e justifica HCA G2 (Modo 3). Plataforma pressupõe carregador dedicado e compatível com OCPP. |
+| **RC 31007/2024** (Sefaz-SP) | Estadual | Vigente | Sefaz-SP entende que comercialização de energia em estação de recarga **incide ICMS**. Operador pode se creditar do ICMS pago na conta de energia (art. 59–70 do RICMS/2000). | **Grupo B** (com margem): obrigação de NFS-e + ICMS na cobrança ao consumidor. **Grupo A** (repasse sem margem): tende a não gerar fato gerador. Motor de rateio precisa diferenciar os dois regimes fiscais. |
+| **Lei Municipal SP 17.336/2020** | Municipal (capital) | Vigente (30/03/2020) | Obriga **medição individualizada e cobrança por consumo** em novos edifícios residenciais e comerciais da capital com previsão de recarga de VE. | **Endosso direto da tese do produto:** a lei já obriga medição individualizada desde 2020, mas nenhuma plataforma BR entrega esse ciclo integrado. O EV ChargeOps é a ferramenta operacional que faltava. |
+| **ABNT NBR 17019/2022** | Federal | Vigente | Norma de instalações elétricas para recarga de VE (referenciada pela IT-41). | Referência técnica para projeto e laudo. |
+
+### ⚖️ Conformidade da proposta
+
+| Norma | Status | Justificativa |
 |---|---|---|
-| **ANEEL RN 1.000/2021** (art. 2º, XV) | Define "estação de recarga" e permite recarga comercial com preços livres. Exige **protocolos abertos** em uso não exclusivamente privado. | Condomínio **não pode comercializar energia com margem** — só repassa o custo do kWh. Plataforma é remunerada como **SaaS**, não como distribuidor. |
-| **Lei 14.874/2024** (federal) | Reforça medição individualizada em condomínios. | Justifica o rateio por kWh por usuário. |
-| **Lei 18.403/2026-SP** (Alesp) | Garante direito de instalação em vaga privativa e autoriza condomínio a estabelecer **rateio ou cobrança individual por consumo**. | **Gatilho regulatório** do produto: novos prédios em SP precisam prever infraestrutura. |
-| **PL 158/2025** (Câmara, CCJC) | Tentativa de base federal equivalente à Lei SP. Aguardando relator. | Acompanhar — pode acelerar adoção em todo o país. |
-| **Portaria CB-SP 003/970/2026 (IT-41)** | Proíbe carregadores portáteis e tomadas convencionais em garagens fechadas — **apenas Modos 3 e 4** permitidos. | Elimina concorrência "tomada comum"; justifica HCA G2 (Modo 3). |
-| **ABNT NBR 17019/2022** | Norma de instalações elétricas para recarga de VE. | Referência técnica para projeto e laudo. |
+| ANEEL RN 1.000/2021 | ✅ Compatível | Plataforma não comercializa energia nem opera como distribuidora — é camada de gestão sobre serviço já permitido a qualquer operador |
+| Lei 18.403/2026-SP | 🔶 Parcial — depende do operador | Lei regula relação condômino × condomínio, não o software. Plataforma pode registrar a comunicação prévia exigida; responsabilidade legal permanece do condômino e do profissional habilitado |
+| Portaria CCB 003/970/2026 (IT-41) | ✅ Compatível, com premissa | Plataforma pressupõe carregador dedicado e compatível com OCPP — alinhado à proibição de soluções improvisadas. Conformidade da instalação física é do instalador, não do software |
+| Lei Municipal SP 17.336/2020 | ✅ Endereça lacuna direta | Plataforma é a ferramenta operacional que faltava para cumprir a exigência legal de medição individualizada — **núcleo da proposta de valor** |
+| RC 31007/2024 (ICMS) | ⏳ Requer tratamento diferenciado | Motor de rateio precisa diferenciar ambientes sem fins lucrativos (sem ICMS) de ambientes com fins lucrativos (com ICMS + NFS-e) |
+
+### ⚠️ Lacunas e riscos regulatórios
+
+- **Rateio de obras coletivas indefinido** — Nem a Lei 18.403/2026 nem a Portaria 003/970/2026 definem quem paga por intervenções coletivas (reforço de prumadas, adequações elétricas) necessárias para viabilizar instalações individuais. Fonte provável de disputa em assembleia.
+- **CP ANEEL 42/2025 sem texto final** — Regras de conexão à rede podem mudar nos próximos meses.
+- **Tratamento fiscal ICMS** — Diferença de incidência entre Grupo A e Grupo B exige modelagem específica no motor de rateio antes do go-live comercial.
+- **Lacuna municipal = oportunidade** — Lei 17.336/2020 não detalha como operacionalizar a medição individualizada (sem decreto executivo complementar). É espaço de mercado para o produto.
 
 ### 🔌 Carregador GoodWe HCA G2
 
@@ -389,12 +411,18 @@ Python/FastAPI · PostgreSQL · Redis · React Native (Expo) · React (portal) �
 
 ## 📚 6. Referências
 
-**Regulação:**
-- ANEEL. [Veículos Elétricos](https://www.gov.br/aneel/pt-br/assuntos/veiculos-eletricos) e [RN 1.000/2021](https://in.gov.br/web/dou/-/resolucao-normativa-aneel-n-1.000-de-7-de-dezembro-de-2021-*-375499427)
+**Regulação federal:**
+- ANEEL. [Veículos Elétricos](https://www.gov.br/aneel/pt-br/assuntos/veiculos-eletricos) e [RN 1.000/2021](https://www2.aneel.gov.br/cedoc/ren20211000.html) (Cap. V — Estações de recarga; art. 2º, XV)
+- ANEEL. [Consulta Pública 42/2025](https://www.gov.br/aneel/pt-br/assuntos/noticias/2025/aneel-abre-consulta-publica-para-aprimorar-regras-de-conexao-de-eletromobilidade-a-rede-eletrica) (regras de conexão de eletromobilidade — em formação)
 - Lei nº 14.874/2024 (federal) · ABNT NBR 17019:2022
-- Lei nº [18.403/2026-SP](https://www.al.sp.gov.br) (Alesp — direito de instalação em condomínio)
-- [PL 158/2025](https://www.camara.leg.br) (Câmara dos Deputados — base federal de condomínio, aguardando CCJC)
-- Corpo de Bombeiros SP. Portaria 003/970/2026 (IT-41 — Modos 3 e 4 em garagens fechadas)
+- [PL 158/2025](https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=2482575) (Câmara dos Deputados — base federal de condomínio, aguardando CCJC)
+
+**Regulação estadual e municipal (SP):**
+- Lei Estadual nº [18.403/2026-SP](https://www.al.sp.gov.br/repositorio/legislacao/lei/2026/lei-18403-18.02.2026.html) (Alesp — direito de instalação em condomínio)
+- Lei Municipal nº [17.336/2020](https://legislacao.prefeitura.sp.gov.br/leis/lei-17336-de-30-de-marco-de-2020) (Prefeitura de SP — medição individualizada e cobrança por consumo)
+- Corpo de Bombeiros SP. [Portaria 003/970/2026](https://doe.sp.gov.br/executivo/secretaria-da-seguranca-publica/portaria-n-003-970-2026-de-17-de-marco-de-2026-20260316113816712141709068) (IT-41 — Modos 3 e 4 em garagens fechadas) · cobertura técnica: [ABVE](https://abve.org.br/nova-regra-para-recarga-em-edificios-em-sp-garante-previsibilidade-e-seguranca-a-eletromobilidade/)
+- Sefaz-SP. [RC 31007/2024](https://legislacao.fazenda.sp.gov.br/Paginas/RC31007_2024.aspx) (Resposta de Consulta Tributária — ICMS sobre recarga)
+- Migalhas. [Lei 18.403/26 de SP — lacunas](https://www.migalhas.com.br/coluna/migalhas-edilicias/452093/lei-18-403-26-de-sp-recarga-de-veiculos-eletricos-em-condominios) (mar/2026)
 
 **Mercado e dados:**
 - ABVE. [ABVE Data](https://abve.org.br/abve-data/) · ANEEL [Dados Abertos](https://dadosabertos.aneel.gov.br)
