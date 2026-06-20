@@ -148,6 +148,20 @@ Três APIs: OpenAPI, Real-time Monitoring e Remote Control. Autenticação via `
 - **Open Charge Map** — mapa de estações
 - **ANEEL Open Data** — tarifas e contexto regulatório
 
+### 🔒 Segurança e LGPD
+
+Pagamento e dados pessoais com **rigor de instituição financeira** — confiança é pré-requisito de qualquer transação:
+
+| Camada | Prática |
+|---|---|
+| **Cartão** | Tokenização via Stripe — dados sensíveis nunca trafegam ou ficam armazenados na infraestrutura do EV ChargeOps |
+| **Pré-autorização** | Bloqueio de saldo antes da recarga; captura só ao final — evita cobrança indevida |
+| **LGPD — consentimento** | Termo explícito no onboarding com finalidade clara de cada dado (identidade, localização, telemetria, cobrança) |
+| **LGPD — minimização** | Coleta apenas o necessário; localização só com app aberto; histórico anonimizado após 24 meses |
+| **LGPD — direitos do titular** | Acesso, correção, portabilidade e eliminação via app — fluxos auditáveis |
+| **Transparência** | Notificação push em cada evento financeiro (recarga liberada, sessão encerrada, cobrança aplicada, multa iniciada) |
+| **Comunicação** | TLS 1.3 obrigatório · OCPP 2.0.1 com certificado por dispositivo em ambientes críticos |
+
 ---
 
 ## 🏗️ 4. Frente 3 — Arquitetura, rateio e IA
@@ -182,12 +196,14 @@ Três APIs: OpenAPI, Real-time Monitoring e Remote Control. Autenticação via `
 
 **Pagamentos:**
 
-| Modo | Contexto (grupo) | Fluxo |
-|---|---|---|
-| 🏢 **Pós-pago** | Condomínio (Grupo A) | Morador recarrega sem pagar no app. No fechamento do mês, gestor exporta relatório por unidade e anexa à conta condominial — valor é **repasse do custo do kWh sem margem** (ANEEL RN 1.000/2021). |
-| 💳 **Pré-pago** | Rede comercial (Grupo B) | Morador cadastra cartão na **Stripe**. Ao encerrar a sessão, backend cobra via PaymentIntent (preço livre, com margem) e emite recibo no app. |
+Antes de qualquer recarga, o app faz **pré-autorização (bloqueio de saldo)** no cartão do morador — garantia de pagamento que elimina inadimplência. A recarga só é liberada se o bloqueio for aceito.
 
-> **Como o EV ChargeOps é remunerado:** assinatura **SaaS por condomínio** (Grupo A — não pode haver markup na energia) e **assinatura + % da transação** no Grupo B. A plataforma cobra pelo **serviço de gestão**, não pela energia em si.
+| Modo | Contexto (grupo) | Composição |
+|---|---|---|
+| 🏢 **Híbrido** | Condomínio (Grupo A) | Cobrança em **duas linhas**: (1) **taxa de acesso/manutenção** mensal por morador habilitado — rateio da infraestrutura (suporta o custo fixo do ponto); (2) **consumo por kWh** repassado a custo, sem margem na energia (ANEEL RN 1.000/2021). |
+| 💳 **Pré-pago** | Rede comercial (Grupo B) | Sessão paga via **Stripe** com pré-autorização no início e captura no encerramento. Preço livre, com margem e tarifa dinâmica da IA. NFS-e emitida automaticamente. |
+
+> **Como o EV ChargeOps é remunerado:** **assinatura SaaS por condomínio** (Grupo A) e **assinatura + % da transação** (Grupo B). A plataforma cobra pelo **serviço de gestão** — não pela energia.
 
 **🖥️ Portal do condomínio (gestor):** consumo por unidade/morador, exportação PDF/CSV, fechamento mensal para cobrança na taxa condominial e **painel de capacidade elétrica** (ver abaixo).
 
@@ -208,6 +224,31 @@ O portal expõe esse comportamento ao gestor:
 
 **Exemplo:** 10 carregadores de 7 kW = 70 kW nominais. Se a demanda contratada é 45 kW, o sistema reparte 4,5 kW por ponto e o painel sinaliza **utilização 100% + sugestão de aumentar demanda para 75 kW** com base no histórico de uso simultâneo.
 
+### 🚫 Anti-ociosidade — tolerância e multa por ocupação
+
+A pesquisa apontou que **9/10 motoristas** identificam vaga ocupada como o maior problema. O EV ChargeOps adota uma régua de ocupação transparente e progressiva:
+
+| Etapa | Tempo após carga completa | O que acontece |
+|---|---|---|
+| 🟢 Tolerância | 0 → 10 min | Janela gratuita para o morador remover o veículo |
+| 🔔 Aviso de multa | 10 min | Notificação push: "multa começa agora" |
+| 🟡 Multa proporcional | > 10 min | Cobrança por minuto excedente (taxa de ocupação) |
+| 🔴 Liberação remota | configurável | Em pontos públicos: gestor pode encerrar sessão remotamente após X min |
+
+Regras: (a) tolerância e tarifa de multa são **configuráveis pelo gestor**; (b) sempre há notificação antes da cobrança; (c) valor da multa é proporcional ao tempo — sem cobrança arbitrária; (d) histórico de ocupação alimenta a IA de precificação dinâmica.
+
+### 🔔 Notificações ao morador
+
+Comunicação é parte do produto. O app dispara push em **três momentos críticos**:
+
+| Momento | Mensagem | Por quê |
+|---|---|---|
+| **−15 min** | "Sua recarga termina em 15 minutos" | Tempo para o morador se planejar e liberar a vaga |
+| **Conclusão** | "Recarga concluída — você tem 10 min de tolerância" | Aciona a régua anti-ociosidade |
+| **Início da multa** | "Multa de ocupação iniciada" | Transparência financeira em tempo real |
+
+Complementam: alerta de **sessão interrompida** (kWh parcial registrado), **falha no carregador** e **fim do mês** (extrato disponível).
+
 **Wireframe do app:**
 
 ![Wireframe EV ChargeOps](docs/app-wireframe.png)
@@ -218,18 +259,24 @@ Telas: mapa com tarifa dinâmica por ponto, sessão ativa (kWh/R$) e histórico 
 
 Comparados rateio fixo, cobrança por tempo e operador terceirizado. **Adotamos cobrança por kWh medido**, com **tarifa ajustada por IA** conforme uso de cada ponto.
 
-**Fórmula:**
+**Fórmulas:**
 
 ```
+# Grupo B (rede comercial) — preço livre, com margem
 tarifa_kWh = tarifa_base × fator_demanda
+valor_sessão = kWh × tarifa_kWh + taxa_ocupação
+
+# Grupo A (condomínio) — repasse sem margem + taxa de acesso
+custo_energia_sessão = kWh × tarifa_concessionária   # repasse direto
+valor_mensal_morador = taxa_acesso + Σ custo_energia_sessão + Σ taxa_ocupação
+
+# IA (comum aos dois grupos)
 fator_demanda = IA(ocupação, fila, histórico, horário)
-valor_sessão = kWh × tarifa_kWh + taxa_ocupação (se aplicável)
-valor_mensal = Σ sessões + taxa_infraestrutura   # pós-pago
 ```
 
-**Lógica de precificação:** pontos mais disputados (alta ocupação, fila, horários de pico) recebem tarifa maior; pontos ociosos, tarifa menor — equilibrando oferta e demanda e incentivando uso fora do pico.
+**Lógica de precificação:** pontos mais disputados (alta ocupação, fila, horários de pico) recebem tarifa maior; pontos ociosos, tarifa menor — equilibrando oferta e demanda e incentivando uso fora do pico. **No Grupo A**, o fator_demanda **não muda o custo da energia** (proibido por ANEEL) — mas serve como **sinal informativo** ao morador para escolher horários de menor ocupação.
 
-**Variáveis:** kWh (telemetria), tarifa_base (gestor/ANEEL), fator_demanda (IA), duração, taxa de infraestrutura (assembleia).
+**Variáveis:** kWh (telemetria), tarifa_concessionária (fatura), tarifa_base (Grupo B), fator_demanda (IA), duração, taxa_acesso e taxa_ocupação (deliberadas em assembleia ou contrato).
 
 **Casos excepcionais:** sessão interrompida (kWh parcial), dois carros na mesma unidade (consolidar), ocupação sem carga (alerta + taxa), visitante (vincular à unidade anfitriã). Tarifa travada no início da sessão — não muda após o morador confirmar.
 
@@ -255,38 +302,88 @@ Dados: histórico de sessões + dataset Kaggle (72.856 sessões) para treino ini
 
 ### 🗄️ Opção C — Esquema de dados (resumo)
 
-Entidades principais: `usuario`, `unidade`, `condominio`, `carregador`, `sessao`, `medicao`, `tarifa_ponto` (base + fator_demanda), `relatorio_mensal`, `relatorio_unidade`, `transacao` (pré-pago).
+Entidades principais: `usuario`, `unidade`, `condominio`, `ponto` (com `tipo` ∈ {`condominio`, `venda`}), `carregador`, `sessao`, `medicao`, `tarifa_ponto` (base + fator_demanda), `evento_ocupacao` (tolerância, multa), `notificacao`, `pre_autorizacao` (Stripe), `transacao`, `relatorio_mensal`, `relatorio_unidade`.
 
-Relacionamento central: condomínio → carregadores e unidades → usuários → sessões → medições → relatório mensal por unidade.
+Relacionamento central: condomínio → pontos → carregadores → sessões → medições + eventos de ocupação → relatório mensal por unidade. O atributo `ponto.tipo` define automaticamente o modelo de cobrança (híbrido vs. pré-pago) e as regras fiscais aplicadas.
 
 ---
 
 ## 🚀 5. Plano Sprint 02
 
-**Objetivo:** MVP com app mobile, portal do condomínio, integração ao carregador (real ou simulado) e motor de rateio.
+**Objetivo:** MVP do EV ChargeOps construído em **5 fases incrementais**, cada uma só faz sentido sobre a anterior — primeiro a base de identidade e segurança, depois descoberta, jornada de recarga, regras de ocupação e, por fim, o modelo de negócio.
 
-| Ordem | Entrega |
+### 🧱 Fase 1 — Fundação do produto
+
+Backend + banco + identidade do usuário + cadastro do parque.
+
+- Backend FastAPI · PostgreSQL · Redis · Docker
+- Onboarding: registro, login (e-mail/OAuth), confirmação de identidade
+- LGPD: termo de consentimento + minimização + tokenização Stripe
+- Cadastro de pontos com atributo `tipo` (`condominio` | `venda`) — define o modelo de cobrança
+- Cadastro de condomínios, unidades e moradores; vínculo morador ↔ unidade
+
+### 📍 Fase 2 — Localização & descoberta
+
+Mapa de pontos e estratégia de cobertura.
+
+- Integração com API de mapas (Google Maps / Mapbox)
+- Mapa do app: pontos próximos, status, tipo (venda/condomínio) e preço estimado
+- Critério de localização para pontos de venda: fluxo de veículos + demanda regional + dados públicos (ABVE, ANEEL)
+
+### ⚡ Fase 3 — Jornada de recarga
+
+Sessão completa, do toque do morador ao débito automático.
+
+- Integração ao carregador (SEMS Portal ou OCPP 1.6J simulado) — boot, status, telemetria
+- Login → escolha do ponto → **pré-autorização Stripe** → liberação remota (OCPP `RemoteStartTransaction`)
+- Telemetria em tempo real (kWh, potência, tensão, corrente)
+- Encerramento com captura automática do bloqueio + recibo no app
+
+### 🚫 Fase 4 — Pós-recarga & ocupação
+
+Régua transparente para girar a vaga com justiça.
+
+- Notificações: **−15 min**, **conclusão**, **início da multa**, sessão interrompida, falha
+- Tolerância configurável (padrão 10 min) + multa proporcional por minuto excedente
+- Portal: painel de capacidade elétrica (demanda contratada × instantânea + throttling)
+- Detecção de anomalias (Isolation Forest)
+
+### 💼 Fase 5 — Modelo de negócio
+
+Cobrança, rateio e inteligência de precificação.
+
+- **Híbrido (Grupo A):** taxa de acesso mensal + repasse de kWh sem margem; portal exporta relatório por unidade para boleto condominial
+- **Pré-pago (Grupo B):** sessão cobrada via Stripe + NFS-e automática
+- IA: precificação dinâmica (`fator_demanda`) + previsão de capacidade
+- Portal: relatório por unidade, exportação PDF/CSV, fechamento mensal
+
+### 💸 Hipótese de custo fixo por ponto (a validar)
+
+Para definir o ponto de equilíbrio da assinatura SaaS, partimos de uma estimativa inicial — a confirmar com dados reais da operação na Sprint 02:
+
+| Item | Faixa mensal |
 |---|---|
-| 1 | Backend + banco (FastAPI, PostgreSQL) |
-| 2 | Integração carregador (SEMS ou OCPP simulado) |
-| 3 | Motor de rateio por kWh |
-| 4 | App: mapa, sessão ativa, histórico |
-| 5 | App: cartão (**Stripe**) + cobrança por sessão (pré-pago) |
-| 6 | Portal: relatório por unidade + exportação PDF/CSV |
-| 7 | Portal: painel de capacidade elétrica (demanda contratada × instantânea + throttling) |
-| 8 | IA: precificação dinâmica + previsão de capacidade + deploy |
+| Conectividade & telemetria | R$ 40–80 |
+| Energia em standby | R$ 20–50 |
+| Manutenção & seguro | R$ 60–120 |
+| **Total estimado por ponto** | **R$ 120–250** |
 
-**Stack:** Python/FastAPI · PostgreSQL · Redis · React Native (Expo) · React (portal) · scikit-learn · **Stripe** (pagamentos) · Docker/Railway
+### 🛠️ Stack
 
-**Critérios de sucesso:**
+Python/FastAPI · PostgreSQL · Redis · React Native (Expo) · React (portal) · scikit-learn · **Stripe** (pagamentos com pré-autorização) · Google Maps/Mapbox · Docker/Railway
 
-- [ ] Mapa com carregadores e status
-- [ ] Sessão completa com telemetria
-- [ ] Pós-pago: uso sem pagamento no app + exportação no portal
-- [ ] Pré-pago: cartão cadastrado via Stripe + cobrança ao encerrar sessão
-- [ ] Precificação dinâmica por ponto (tarifa varia conforme demanda)
-- [ ] Painel de capacidade elétrica com alerta de upgrade de demanda contratada
-- [ ] Ao menos um modelo de IA em produção (precificação ou anomalias)
+### ✅ Critérios de sucesso
+
+- [ ] Onboarding com consentimento LGPD + tokenização de cartão
+- [ ] Mapa com carregadores, status, tipo e preço estimado
+- [ ] Pré-autorização Stripe antes de liberar a recarga
+- [ ] Sessão completa com telemetria em tempo real
+- [ ] Notificações: −15 min, conclusão e início da multa
+- [ ] Tolerância de 10 min + cobrança proporcional pela ocupação
+- [ ] Híbrido (condomínio): taxa de acesso + repasse de kWh + relatório por unidade
+- [ ] Pré-pago (rede comercial): captura via Stripe + NFS-e
+- [ ] Painel de capacidade elétrica com alerta de upgrade
+- [ ] Pelo menos um modelo de IA em produção (precificação ou anomalias)
 
 ---
 
