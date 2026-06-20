@@ -4,6 +4,12 @@
 
 Plataforma para gestão de recarga de veículos elétricos em infraestrutura compartilhada: sessões por usuário, rateio justo por kWh e inteligência operacional.
 
+### 🌐 Site de apresentação
+
+> **[👉 Acesse a apresentação interativa do EV ChargeOps](https://site-pink-xi-65.vercel.app/)**
+>
+> Conheça o produto, as 5 fases de construção, o modelo de negócio e a jornada de recarga em um site dedicado.
+
 ---
 
 ## 👥 Equipe
@@ -15,7 +21,8 @@ Plataforma para gestão de recarga de veículos elétricos em infraestrutura com
 | Carlos Eugenio Andrade | RM570285 |
 | Rodrigo Gomes Dias | RM569142 |
 
-**Repositório:** https://github.com/rodrigogmdias/ev-chargeops
+**Repositório:** https://github.com/rodrigogmdias/ev-chargeops  
+**Apresentação:** https://site-pink-xi-65.vercel.app/
 
 ---
 
