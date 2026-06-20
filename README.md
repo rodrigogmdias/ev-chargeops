@@ -380,17 +380,6 @@ Cobrança, rateio e inteligência de precificação.
 - IA: precificação dinâmica (`fator_demanda`) + previsão de capacidade
 - Portal: relatório por unidade, exportação PDF/CSV, fechamento mensal
 
-### 💸 Hipótese de custo fixo por ponto (a validar)
-
-Para definir o ponto de equilíbrio da assinatura SaaS, partimos de uma estimativa inicial — a confirmar com dados reais da operação na Sprint 02:
-
-| Item | Faixa mensal |
-|---|---|
-| Conectividade & telemetria | R$ 40–80 |
-| Energia em standby | R$ 20–50 |
-| Manutenção & seguro | R$ 60–120 |
-| **Total estimado por ponto** | **R$ 120–250** |
-
 ### 🛠️ Stack
 
 Backend · PostgreSQL · Redis · App mobile · Portal web · scikit-learn (IA) · **Stripe** (pagamentos com pré-autorização) · Google Maps/Mapbox · Docker/Railway
