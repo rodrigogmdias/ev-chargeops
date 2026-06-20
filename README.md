@@ -59,7 +59,7 @@ Entre conectar o veículo e desconectar, o carregador passa por estados (padrão
 
 ### 💰 Modelos de cobrança
 
-Cinco modelos estruturam a cobrança em recarga compartilhada: **gratuita, por kWh, por tempo, assinatura mensal** e **rateio condominial** (modelo central do EV ChargeOps). A Lei 14.874/2024 reforça **medição individualizada**: quem usa paga o que consumiu.
+A cobrança é feita **por kWh consumido** — modelo central do EV ChargeOps, em duas variantes: **rateio condominial** (Grupo A, sem margem) e **por sessão** (Grupo B, com margem e tarifa dinâmica). A Lei 14.874/2024 reforça **medição individualizada**: quem usa paga o que consumiu.
 
 A diferença entre os dois grupos não está na tecnologia (OCPP, medição, autenticação são iguais) mas nas **regras de precificação e natureza fiscal**:
 
