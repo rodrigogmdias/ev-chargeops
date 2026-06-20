@@ -8,13 +8,13 @@ Plataforma para gestão de recarga de veículos elétricos em infraestrutura com
 
 ## 👥 Equipe
 
-| Integrante | RM | Função |
-|---|---|---|
-| [Nome completo] | [RM000000] | [Papel] |
-| [Nome completo] | [RM000000] | [Papel] |
-| [Nome completo] | [RM000000] | [Papel] |
+| Integrante | RM |
+|---|---|
+| Julia Ramos | RM568988 |
+| Matheus Fuchelberguer | RM571321 |
+| Carlos Eugenio Andrade | RM570285 |
+| Rodrigo Gomes Dias | RM569142 |
 
-**Squad:** [Nome da squad]  
 **Repositório:** https://github.com/rodrigogmdias/ev-chargeops
 
 ---
