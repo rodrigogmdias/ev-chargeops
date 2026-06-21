@@ -21,8 +21,7 @@ Plataforma para gestão de recarga de veículos elétricos em infraestrutura com
 | Carlos Eugenio Andrade | RM570285 |
 | Rodrigo Gomes Dias | RM569142 |
 
-**Repositório:** https://github.com/rodrigogmdias/ev-chargeops  
-**Apresentação:** https://site-pink-xi-65.vercel.app/
+**Repositório:** https://github.com/rodrigogmdias/ev-chargeops
 
 ---
 
@@ -34,8 +33,8 @@ Hoje falta, na prática:
 
 - 🔍 Identificar quem carregou e quanto consumiu (kWh)
 - 💰 Cobrar de forma transparente
-- 📊 Dar visibilidade ao gestor e ao morador
-- ⚡ Gerenciar a capacidade elétrica do prédio
+- 📊 Dar visibilidade ao gestor e ao motorista
+- ⚡ Gerenciar a capacidade elétrica do local
 
 **Cenário adotado:** condomínio residencial com carregador compartilhado, extensível a edifícios corporativos e campus.
 
@@ -53,12 +52,12 @@ Principais dificuldades: ausência de controle por usuário, cobrança opaca, co
 
 ### 🏢 Ambientes de recarga compartilhada
 
-O produto endereça **dois grupos de ambientes** com perfis jurídicos e operacionais distintos. O cenário-foco é condomínio residencial, mas a arquitetura serve todos:
+O produto endereça **dois modelos de operação** com perfis jurídicos e operacionais distintos. O cenário-foco é condomínio residencial, mas a arquitetura serve todos:
 
-| Grupo | Ambientes | Característica |
+| Modelo | Ambientes | Característica |
 |---|---|---|
-| **A — Sem fins lucrativos** | Condomínio residencial · Condomínio comercial / lajes · Edifício corporativo · Campus universitário · Hospital / associação | Entidade gestora **só repassa o custo do kWh** (sem margem na energia) |
-| **B — Com fins lucrativos** | Estacionamento de destino (shopping, aeroporto) · Posto / eletroposto · Hotel / resort / coworking | Operador comercial define preço livremente, com margem e precificação dinâmica |
+| **Rede privada** | Condomínio residencial · Condomínio comercial / lajes · Edifício corporativo · Campus universitário · Hospital / associação | Organização **só repassa o custo do kWh** (sem margem na energia) |
+| **Rede comercial** | Estacionamento de destino (shopping, aeroporto) · Posto / eletroposto · Hotel / resort / coworking | Organização define preço livremente, com margem e precificação dinâmica |
 
 ### Sessão de recarga (visão técnica)
 
@@ -66,20 +65,21 @@ Entre conectar o veículo e desconectar, o carregador passa por estados (padrão
 
 ### 💰 Modelos de cobrança
 
-A cobrança é feita **por kWh consumido** — modelo central do EV ChargeOps, em duas variantes: **rateio condominial** (Grupo A, sem margem) e **por sessão** (Grupo B, com margem e tarifa dinâmica). A Lei 14.874/2024 reforça **medição individualizada**: quem usa paga o que consumiu.
+A cobrança é feita **por kWh consumido** — modelo central do EV ChargeOps, em duas variantes: **rateio de custo** (rede privada, sem margem) e **por sessão** (rede comercial, com margem e tarifa dinâmica).
 
-A diferença entre os dois grupos não está na tecnologia (API SEMS, medição e autenticação são iguais) mas nas **regras de precificação e natureza fiscal**:
+A diferença entre os dois modelos não está na tecnologia (API SEMS, medição e autenticação são iguais) mas nas **regras de precificação e natureza fiscal**:
 
-| Dimensão | Grupo A (sem fins lucrativos) | Grupo B (com fins lucrativos) |
+| Dimensão | Rede privada | Rede comercial |
 |---|---|---|
 | Markup sobre o kWh | **Proibido** — custo real (ANEEL RN 1.000/2021, art. 2º, XV) | Permitido — preço livre |
 | Precificação dinâmica por demanda | Não aplicável à energia | Disponível |
+| Pagamento | Cartão pré-pago (Stripe) ou boleto pós-pago — configurável | Cartão pré-pago (Stripe) |
 | Documento fiscal | Rateio de despesa (não NFS-e) | NFS-e obrigatória |
-| Como o EV ChargeOps é remunerado | **Assinatura SaaS por condomínio** | Assinatura + % da transação |
+| Como o EV ChargeOps é remunerado | **Assinatura SaaS por organização** | Assinatura + % da transação |
 
 ### 📋 Opção B — Pesquisa com usuários
 
-Formulário aplicado a **10 motoristas de EV/híbridos plug-in** (26/05–09/06/2026).
+Formulário aplicado a **10 motoristas de EV/híbridos plug-in** (26/05–09/06/2026, pesquisa própria da equipe).
 
 **Principais resultados:**
 
@@ -93,14 +93,14 @@ Formulário aplicado a **10 motoristas de EV/híbridos plug-in** (26/05–09/06/
 1. Rateio por **kWh × tarifa** — consenso total na pesquisa
 2. **Reserva + alerta de término** — reduz conflito de vaga
 3. **Histórico e consumo em tempo real** — prioridade do MVP
-4. **Plataforma única por condomínio** — elimina app por operador
-5. **Sessão interrompida** — registrar kWh parcial e notificar o usuário
+4. **Plataforma única por organização** — elimina app por rede
+5. **Sessão interrompida** — registrar kWh parcial e notificar o motorista
 6. **Previsão de custo e tarifa dinâmica** — exibir preço antes de carregar; IA ajusta tarifa por demanda do ponto
-7. **Limite elétrico do condomínio** — quando vários carregadores ligam ao mesmo tempo, a potência por ponto cai; portal precisa mostrar quanto da capacidade contratada está sendo usada e indicar quando aumentar a demanda na concessionária
+7. **Limite elétrico da organização** — quando vários carregadores ligam ao mesmo tempo, a potência por ponto cai; portal precisa mostrar quanto da capacidade contratada está sendo usada e indicar quando aumentar a demanda na concessionária
 
 ### 🏁 Opção A — Análise de concorrentes
 
-Cinco soluções mapeadas no contexto da recarga compartilhada. Nenhuma fecha o ciclo de **rateio condominial integrado no Brasil**:
+Cinco soluções mapeadas no contexto da recarga compartilhada. Nenhuma fecha o ciclo de **rateio de custo integrado no Brasil**:
 
 | Solução | Origem | Foco | Limitação para o BR |
 |---|---|---|---|
@@ -130,37 +130,28 @@ São Paulo é mercado prioritário: **30,6% das vendas nacionais** + **única le
 
 ## ⚙️ 3. Frente 2 — Tecnologia e regulação
 
-### 📜 Marco regulatório
+### 📜 Marco regulatório e conformidade
 
-> **Posicionamento estratégico:** o EV ChargeOps se posiciona deliberadamente como **camada de software de gestão** — **não** como instalador, distribuidora ou comercializadora de energia. As responsabilidades regulatórias mais pesadas (instalação física, segurança contra incêndio, comunicação à distribuidora) permanecem com o condomínio, o profissional habilitado e a administradora. Isso é decisão de escopo, não lacuna.
+O EV ChargeOps se posiciona deliberadamente como **camada de software de gestão** — não como instalador, distribuidora ou comercializadora de energia. Responsabilidades de instalação física, segurança e comunicação à distribuidora permanecem com a organização e o profissional habilitado.
 
-| Norma | Esfera | Status | O que estabelece | Impacto no produto |
-|---|---|---|---|---|
-| **ANEEL RN 1.000/2021** (art. 2º, XV) | Federal | Vigente | Define "estação de recarga" e trata recarga como **serviço livre**, sem outorga. Exige comunicação prévia à distribuidora ao instalar; protocolos abertos em uso não exclusivamente privado. | Condomínio **não pode comercializar energia com margem** — só repassa custo do kWh. Plataforma é remunerada como **SaaS**, não como distribuidor. Portal pode gerar automaticamente o comunicado à distribuidora. |
-| **Lei 14.874/2024** (federal) | Federal | Vigente | Reforça medição individualizada em condomínios. | Justifica o rateio por kWh por usuário. |
-| **CP ANEEL 42/2025** | Federal | **Em formação** | Revisão das regras de **conexão de carregadores à rede de distribuição** (encerrada 10/03/2026, sem texto final). | **Risco regulatório a monitorar** — arquitetura deve acomodar mudança de requisitos técnicos sem redesenho estrutural. |
-| **PL 158/2025** | Federal | Tramitação inicial (CCJC) | Tentativa de base federal equivalente à Lei SP. Aguardando relator. | Acompanhar — pode acelerar adoção em todo o país. |
-| **Lei Estadual 18.403/2026-SP** (Alesp) | Estadual | Vigente (18/02/2026) | Direito do condômino de instalar carregador às próprias expensas em vaga privativa. Requisitos: compatibilidade elétrica, normas da distribuidora e ABNT, **profissional habilitado (ART/RRT)** e **comunicação formal prévia à administração**. Art. 2º: novos empreendimentos devem prever capacidade elétrica mínima. | **Gatilho regulatório** da demanda. Portal pode registrar o ART/RRT e o comunicado à administração — viraliza adoção em assembleia. |
-| **Portaria CCB 003/970/2026** (IT-41) | Estadual | Vigente (17/03/2026) | Segurança contra incêndio para SAVE em garagens. Apenas **Modos 3 (AC) e 4 (DC)** em áreas internas (NBR IEC 61851-1). Responsabilidade técnica integral do instalador; chave de desligamento de emergência; sinalização padronizada. Vistoria CBPMESP a partir da renovação do AVCB. | Elimina concorrência "tomada comum" e justifica HCA G2 (Modo 3). Plataforma pressupõe carregador dedicado e gerenciável remotamente (no MVP, HCA G2 + API SEMS). |
-| **RC 31007/2024** (Sefaz-SP) | Estadual | Vigente | Sefaz-SP entende que comercialização de energia em estação de recarga **incide ICMS**. Operador pode se creditar do ICMS pago na conta de energia (art. 59–70 do RICMS/2000). | **Grupo B** (com margem): obrigação de NFS-e + ICMS na cobrança ao consumidor. **Grupo A** (repasse sem margem): tende a não gerar fato gerador. Motor de rateio precisa diferenciar os dois regimes fiscais. |
-| **Lei Municipal SP 17.336/2020** | Municipal (capital) | Vigente (30/03/2020) | Obriga **medição individualizada e cobrança por consumo** em novos edifícios residenciais e comerciais da capital com previsão de recarga de VE. | **Endosso direto da tese do produto:** a lei já obriga medição individualizada desde 2020, mas nenhuma plataforma BR entrega esse ciclo integrado. O EV ChargeOps é a ferramenta operacional que faltava. |
-| **ABNT NBR 17019/2022** | Federal | Vigente | Norma de instalações elétricas para recarga de VE (referenciada pela IT-41). | Referência técnica para projeto e laudo. |
+**O que a regulação habilita:**
 
-### ⚖️ Conformidade da proposta
+- **ANEEL RN 1.000/2021** — recarga é serviço livre, sem outorga. Organizações de rede privada não podem cobrar margem na energia — apenas repassam o custo do kWh. A plataforma é remunerada como **SaaS**, nunca como distribuidora.
+- **Lei Estadual 18.403/2026-SP** — direito do condômino de instalar carregador em vaga privativa. **Gatilho regulatório** da demanda em SP; o portal pode registrar o comunicado formal à administração exigido pela lei.
+- **Lei Municipal 17.336/2020-SP** — obriga medição individualizada e cobrança por consumo em novos edifícios desde 2020. A lei existe, mas nenhuma plataforma entrega esse ciclo integrado — o EV ChargeOps é a ferramenta operacional que faltava e o **núcleo da proposta de valor**.
+- **IT-41 (Portaria CCB 003/970/2026)** — exige carregadores dedicados Modo 3 ou 4 em garagens fechadas. Elimina concorrência de "tomada comum" e valida o HCA G2 como hardware-base da plataforma.
 
-| Norma | Status | Justificativa |
-|---|---|---|
-| ANEEL RN 1.000/2021 | ✅ Compatível | Plataforma não comercializa energia nem opera como distribuidora — é camada de gestão sobre serviço já permitido a qualquer operador |
-| Lei 18.403/2026-SP | 🔶 Parcial — depende do operador | Lei regula relação condômino × condomínio, não o software. Plataforma pode registrar a comunicação prévia exigida; responsabilidade legal permanece do condômino e do profissional habilitado |
-| Portaria CCB 003/970/2026 (IT-41) | ✅ Compatível, com premissa | Plataforma pressupõe carregador dedicado e gerenciável remotamente (HCA G2 via API SEMS) — alinhado à proibição de soluções improvisadas. Conformidade da instalação física é do instalador, não do software |
-| Lei Municipal SP 17.336/2020 | ✅ Endereça lacuna direta | Plataforma é a ferramenta operacional que faltava para cumprir a exigência legal de medição individualizada — **núcleo da proposta de valor** |
-| RC 31007/2024 (ICMS) | ⏳ Requer tratamento diferenciado | Motor de rateio precisa diferenciar ambientes sem fins lucrativos (sem ICMS) de ambientes com fins lucrativos (com ICMS + NFS-e) |
+**Restrições que afetam a arquitetura:**
+
+- **Rede comercial**: RC 31007/2024 (Sefaz-SP) determina incidência de ICMS e emissão de NFS-e obrigatória. O motor de rateio diferencia os dois regimes fiscais.
+- **CP ANEEL 42/2025** — revisão das regras de conexão à rede em andamento, sem texto final. A arquitetura deve absorver mudanças sem redesenho estrutural.
+- **PL 158/2025** — base federal de condomínio, em tramitação (CCJC). Pode acelerar adoção nacional se aprovado.
 
 ### ⚠️ Lacunas e riscos regulatórios
 
 - **Rateio de obras coletivas indefinido** — Nem a Lei 18.403/2026 nem a Portaria 003/970/2026 definem quem paga por intervenções coletivas (reforço de prumadas, adequações elétricas) necessárias para viabilizar instalações individuais. Fonte provável de disputa em assembleia.
 - **CP ANEEL 42/2025 sem texto final** — Regras de conexão à rede podem mudar nos próximos meses.
-- **Tratamento fiscal ICMS** — Diferença de incidência entre Grupo A e Grupo B exige modelagem específica no motor de rateio antes do go-live comercial.
+- **Tratamento fiscal ICMS** — Diferença de incidência entre rede privada e rede comercial exige modelagem específica no motor de rateio antes do go-live comercial.
 - **Lacuna municipal = oportunidade** — Lei 17.336/2020 não detalha como operacionalizar a medição individualizada (sem decreto executivo complementar). É espaço de mercado para o produto.
 
 ### 🔌 Carregador GoodWe HCA G2
@@ -172,6 +163,8 @@ Interfaces: RS-485, LAN, Wi-Fi, Bluetooth (hardware). Modelos de 7–22 kW, Type
 ### API SEMS Portal (Opção B)
 
 Integração **única e oficial** com o HCA G2. Três APIs disponíveis: **OpenAPI** (dados históricos), **Real-time Monitoring** (telemetria ao vivo) e **Remote Control** (start/stop e ajuste de potência). Autenticação via `CrossLogin`. Toda a camada de conectividade da plataforma é construída sobre esses endpoints.
+
+**OCPP e compatibilidade futura:** OCPP (Open Charge Point Protocol) é o padrão aberto da indústria — permite que carregadores de qualquer fabricante se comuniquem com qualquer plataforma de gestão compatível. No MVP com HCA G2, a equipe optou pela API SEMS: integração nativa, controle remoto e telemetria sem intermediário. A arquitetura suporta a adição de OCPP para compatibilidade com carregadores de outros fabricantes.
 
 ### APIs complementares (Opção C)
 
@@ -203,7 +196,7 @@ Pagamento e dados pessoais com **rigor de instituição financeira** — confian
 | Física | HCA G2, veículo EV |
 | Conectividade | API SEMS Portal (GoodWe Cloud) |
 | Aplicação | Backend, rateio, IA, PostgreSQL |
-| Apresentação | App mobile (morador) + Portal web (condomínio) |
+| Apresentação | App mobile (motorista) + Portal web (organização) |
 
 ### Diagrama de arquitetura
 
@@ -211,35 +204,37 @@ Pagamento e dados pessoais com **rigor de instituição financeira** — confian
 
 ### Fluxo: sessão → cobrança
 
-1. Morador toca **Iniciar recarga** no app
+1. Motorista toca **Iniciar recarga** no app
 2. Backend valida e libera o carregador remotamente
 3. Telemetria (kWh, potência) flui para o backend
 4. 🤖 IA calcula **tarifa dinâmica** do ponto (oferta e demanda)
 5. Motor de rateio aplica: `kWh × tarifa_ajustada`
-6. **Pós-pago:** relatório mensal no portal · **Pré-pago:** débito via Stripe
+6. **Rede privada:** extrato mensal no portal · **Rede comercial:** débito via Stripe
 
 ### Solução proposta
 
-**📱 App mobile (morador):** mapa de carregadores com **tarifa dinâmica por ponto**, início de sessão pelo app (sem RFID), acompanhamento em tempo real (kWh, potência, valor) e histórico. Antes de iniciar, o app exibe o preço estimado da sessão conforme demanda do momento.
+**📱 App mobile (motorista):** mapa de carregadores com **tarifa dinâmica por ponto**, início de sessão pelo app (sem RFID), acompanhamento em tempo real (kWh, potência, valor) e histórico. Antes de iniciar, o app exibe o preço estimado da sessão conforme demanda do momento.
 
-**Desbloqueio:** morador toca *Iniciar recarga* → backend valida → libera carregador via **API SEMS (Remote Control)** → sessão vinculada ao usuário.
+**Desbloqueio:** motorista toca *Iniciar recarga* → backend valida → libera carregador via **API SEMS (Remote Control)** → sessão vinculada ao usuário.
 
 **Pagamentos:**
 
-Antes de qualquer recarga, o app faz **pré-autorização (bloqueio de saldo)** no cartão do morador — garantia de pagamento que elimina inadimplência. A recarga só é liberada se o bloqueio for aceito.
+Antes de qualquer recarga, o app faz **pré-autorização (bloqueio de saldo)** no cartão do motorista — garantia de pagamento que elimina inadimplência. A recarga só é liberada se o bloqueio for aceito.
 
-| Modo | Contexto (grupo) | Composição |
+| Modo | Contexto | Composição |
 |---|---|---|
-| 🏢 **Híbrido** | Condomínio (Grupo A) | Cobrança em **duas linhas**: (1) **taxa de acesso/manutenção** mensal por morador habilitado — rateio da infraestrutura (suporta o custo fixo do ponto); (2) **consumo por kWh** repassado a custo, sem margem na energia (ANEEL RN 1.000/2021). |
-| 💳 **Pré-pago** | Rede comercial (Grupo B) | Sessão paga via **Stripe** com pré-autorização no início e captura no encerramento. Preço livre, com margem e tarifa dinâmica da IA. NFS-e emitida automaticamente. |
+| 🏢 **Rateio de custo** | Rede privada | Cobrança em **duas linhas**: (1) **taxa de acesso/manutenção** mensal por motorista habilitado — rateio da infraestrutura; (2) **consumo por kWh** repassado a custo, sem margem na energia (ANEEL RN 1.000/2021). Pagamento via cartão pré-pago ou boleto pós-pago — configurável pela organização. |
+| 💳 **Pré-pago** | Rede comercial | Sessão paga via **Stripe** com pré-autorização no início e captura no encerramento. Preço livre, com margem e tarifa dinâmica da IA. NFS-e emitida automaticamente. |
 
-> **Como o EV ChargeOps é remunerado:** **assinatura SaaS por condomínio** (Grupo A) e **assinatura + % da transação** (Grupo B). A plataforma cobra pelo **serviço de gestão** — não pela energia.
+> **Como o EV ChargeOps é remunerado:** **assinatura SaaS por organização** (rede privada) e **assinatura + % da transação** (rede comercial). A plataforma cobra pelo **serviço de gestão** — não pela energia.
 
-**🖥️ Portal do condomínio (gestor):** consumo por unidade/morador, exportação PDF/CSV, fechamento mensal para cobrança na taxa condominial e **painel de capacidade elétrica** (ver abaixo).
+**🌱 ESG (rede privada — corporativo e campus):** Ambientes corporativos e campi universitários têm um benefício adicional: os dados verificáveis de kWh por motorista identificado habilitam relatórios de **Escopo 3** (Categoria 7 — deslocamento de funcionários, GHG Protocol / ISO 14064-1) e suportam certificações como LEED e GRI 305. A recarga com rastreabilidade vale mais que a recarga sem — porque só a primeira entra no relatório de sustentabilidade.
+
+**🖥️ Portal da organização (gestor):** consumo por unidade/motorista, exportação PDF/CSV, fechamento mensal com extrato por unidade e **painel de capacidade elétrica** (ver abaixo).
 
 ### ⚡ Balanceamento de carga e capacidade contratada
 
-O condomínio contrata uma **demanda (kW)** junto à concessionária. Quando vários carregadores operam em paralelo, a soma das potências pode ultrapassar esse limite — então o HCA G2 (balanceamento dinâmico nativo) **reduz a potência entregue por ponto** para proteger a instalação. Resultado: cada morador recebe menos kW e a sessão demora mais. A telemetria do throttling é lida pela API SEMS e refletida no portal.
+A organização contrata uma **demanda (kW)** junto à concessionária. Quando vários carregadores operam em paralelo, a soma das potências pode ultrapassar esse limite — então o HCA G2 (balanceamento dinâmico nativo) **reduz a potência entregue por ponto** para proteger a instalação. Resultado: cada motorista recebe menos kW e a sessão demora mais. A telemetria do throttling é lida pela API SEMS e refletida no portal.
 
 O portal expõe esse comportamento ao gestor:
 
@@ -260,20 +255,20 @@ A pesquisa apontou que **9/10 motoristas** identificam vaga ocupada como o maior
 
 | Etapa | Tempo após carga completa | O que acontece |
 |---|---|---|
-| 🟢 Tolerância | 0 → 10 min | Janela gratuita para o morador remover o veículo |
+| 🟢 Tolerância | 0 → 10 min | Janela gratuita para o motorista remover o veículo |
 | 🔔 Aviso de multa | 10 min | Notificação push: "multa começa agora" |
 | 🟡 Multa proporcional | > 10 min | Cobrança por minuto excedente (taxa de ocupação) |
 | 🔴 Liberação remota | configurável | Em pontos públicos: gestor pode encerrar sessão remotamente após X min |
 
 Regras: (a) tolerância e tarifa de multa são **configuráveis pelo gestor**; (b) sempre há notificação antes da cobrança; (c) valor da multa é proporcional ao tempo — sem cobrança arbitrária; (d) histórico de ocupação alimenta a IA de precificação dinâmica.
 
-### 🔔 Notificações ao morador
+### 🔔 Notificações ao motorista
 
 Comunicação é parte do produto. O app dispara push em **três momentos críticos**:
 
 | Momento | Mensagem | Por quê |
 |---|---|---|
-| **−15 min** | "Sua recarga termina em 15 minutos" | Tempo para o morador se planejar e liberar a vaga |
+| **−15 min** | "Sua recarga termina em 15 minutos" | Tempo para o motorista se planejar e liberar a vaga |
 | **Conclusão** | "Recarga concluída — você tem 10 min de tolerância" | Aciona a régua anti-ociosidade |
 | **Início da multa** | "Multa de ocupação iniciada" | Transparência financeira em tempo real |
 
@@ -292,23 +287,23 @@ Comparados rateio fixo, cobrança por tempo e operador terceirizado. **Adotamos 
 **Fórmulas:**
 
 ```
-# Grupo B (rede comercial) — preço livre, com margem
+# Rede comercial — preço livre, com margem
 tarifa_kWh = tarifa_base × fator_demanda
-valor_sessão = kWh × tarifa_kWh + taxa_ocupação
+valor_sessao = kWh × tarifa_kWh + taxa_ocupacao
 
-# Grupo A (condomínio) — repasse sem margem + taxa de acesso
-custo_energia_sessão = kWh × tarifa_concessionária   # repasse direto
-valor_mensal_morador = taxa_acesso + Σ custo_energia_sessão + Σ taxa_ocupação
+# Rede privada — repasse sem margem + taxa de acesso
+custo_energia_sessao = kWh × tarifa_concessionaria   # repasse direto
+valor_mensal_usuario = taxa_acesso + Σ custo_energia_sessao + Σ taxa_ocupacao
 
-# IA (comum aos dois grupos)
-fator_demanda = IA(ocupação, fila, histórico, horário)
+# IA (comum aos dois modelos)
+fator_demanda = IA(ocupacao, fila, historico, horario)
 ```
 
-**Lógica de precificação:** pontos mais disputados (alta ocupação, fila, horários de pico) recebem tarifa maior; pontos ociosos, tarifa menor — equilibrando oferta e demanda e incentivando uso fora do pico. **No Grupo A**, o fator_demanda **não muda o custo da energia** (proibido por ANEEL) — mas serve como **sinal informativo** ao morador para escolher horários de menor ocupação.
+**Lógica de precificação:** pontos mais disputados (alta ocupação, fila, horários de pico) recebem tarifa maior; pontos ociosos, tarifa menor — equilibrando oferta e demanda e incentivando uso fora do pico. **Na rede privada**, o fator_demanda **não muda o custo da energia** (proibido por ANEEL) — mas serve como **sinal informativo** ao motorista para escolher horários de menor ocupação.
 
-**Variáveis:** kWh (telemetria), tarifa_concessionária (fatura), tarifa_base (Grupo B), fator_demanda (IA), duração, taxa_acesso e taxa_ocupação (deliberadas em assembleia ou contrato).
+**Variáveis:** kWh (telemetria), tarifa_concessionaria (fatura), tarifa_base (rede comercial), fator_demanda (IA), duração, taxa_acesso e taxa_ocupacao (deliberadas em assembleia ou contrato).
 
-**Casos excepcionais:** sessão interrompida (kWh parcial), dois carros na mesma unidade (consolidar), ocupação sem carga (alerta + taxa), visitante (vincular à unidade anfitriã). Tarifa travada no início da sessão — não muda após o morador confirmar.
+**Casos excepcionais:** sessão interrompida (kWh parcial), dois carros na mesma unidade (consolidar), ocupação sem carga (alerta + taxa), visitante (vincular à unidade anfitriã). Tarifa travada no início da sessão — não muda após o motorista confirmar.
 
 ### 🤖 Opção B — Papel da IA
 
@@ -332,9 +327,78 @@ Dados: histórico de sessões + dataset Kaggle (72.856 sessões) para treino ini
 
 ### 🗄️ Opção C — Esquema de dados (resumo)
 
-Entidades principais: `usuario`, `unidade`, `condominio`, `ponto` (com `tipo` ∈ {`condominio`, `venda`}), `carregador`, `sessao`, `medicao`, `tarifa_ponto` (base + fator_demanda), `evento_ocupacao` (tolerância, multa), `notificacao`, `pre_autorizacao` (Stripe), `transacao`, `relatorio_mensal`, `relatorio_unidade`.
+Entidades principais: `usuario` (autenticação), `membro` (usuario ↔ organizacao + papel: motorista | gestor), `organizacao` (tipo: privada | comercial), `unidade` (agrupador de rateio e relatórios — obrigatório em rede privada, opcional em rede comercial), `ponto`, `carregador`, `sessao`, `medicao`, `tarifa` (base + fator_demanda), `evento_ocupacao` (tolerância, multa), `notificacao`, `pre_autorizacao` (Stripe), `transacao`, `relatorio` (com filtros de período, unidade e ponto).
 
-Relacionamento central: condomínio → pontos → carregadores → sessões → medições + eventos de ocupação → relatório mensal por unidade. O atributo `ponto.tipo` define automaticamente o modelo de cobrança (híbrido vs. pré-pago) e as regras fiscais aplicadas.
+Relacionamento central: organização → pontos → carregadores → sessões → medições + eventos de ocupação → transação / relatório. Na rede privada, `membro.unidade_id` é obrigatório: o consumo da sessão é atribuído à unidade do motorista para rateio. Na rede comercial, o consumo vai diretamente para a transação do motorista via Stripe.
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'fontFamily': 'trebuchet ms, sans-serif', 'fontSize': '13px'}}}%%
+flowchart LR
+
+    classDef auth    fill:#3B82F6,stroke:#1D4ED8,color:#fff
+    classDef org     fill:#7C3AED,stroke:#5B21B6,color:#fff
+    classDef infra   fill:#059669,stroke:#065F46,color:#fff
+    classDef session fill:#D97706,stroke:#92400E,color:#fff
+    classDef fin     fill:#DC2626,stroke:#991B1B,color:#fff
+    classDef comms   fill:#0891B2,stroke:#0C4A6E,color:#fff
+
+    subgraph AUTH["🔐 Autenticação"]
+        U["👤 usuario"]
+        M["🔗 membro\npapel: motorista · gestor"]
+    end
+
+    subgraph ORGN["🏢 Organização"]
+        O["🏢 organizacao\ntipo: privada · comercial"]
+        UN["📦 unidade"]
+    end
+
+    subgraph INFRA["⚡ Infraestrutura"]
+        P["📍 ponto"]
+        CA["🔌 carregador"]
+        T["💲 tarifa"]
+    end
+
+    subgraph SESSN["🔋 Sessão"]
+        S["⚡ sessao"]
+        ME["📊 medicao"]
+        EV["🚫 evento_ocupacao"]
+    end
+
+    subgraph FINN["💰 Financeiro"]
+        PA["🔒 pre_autorizacao"]
+        TR["💳 transacao"]
+    end
+
+    subgraph COMM["📬 Comunicação"]
+        N["🔔 notificacao"]
+        R["📄 relatorio"]
+    end
+
+    U  -->|"1:M"| M
+    O  -->|"1:M"| M
+    O  -->|"1:M"| UN
+    O  -->|"1:M"| P
+    O  -->|"1:M"| R
+    UN -->|"1:M"| M
+    UN -->|"1:M"| R
+    P  -->|"1:M"| CA
+    P  -->|"1:M"| T
+    CA -->|"1:M"| S
+    M  -->|"1:M"| S
+    S  -->|"1:M"| ME
+    S  -->|"1:M"| EV
+    S  -->|"1:1"| PA
+    S  -->|"0..1"| TR
+    S  -->|"1:M"| N
+    U  -->|"1:M"| N
+
+    class U,M auth
+    class O,UN org
+    class P,CA,T infra
+    class S,ME,EV session
+    class PA,TR fin
+    class N,R comms
+```
 
 ---
 
@@ -349,20 +413,20 @@ Backend + banco + identidade do usuário + cadastro do parque.
 - Backend · PostgreSQL · Redis · Docker
 - Onboarding: registro, login (e-mail/OAuth), confirmação de identidade
 - LGPD: termo de consentimento + minimização + tokenização Stripe
-- Cadastro de pontos com atributo `tipo` (`condominio` | `venda`) — define o modelo de cobrança
-- Cadastro de condomínios, unidades e moradores; vínculo morador ↔ unidade
+- Cadastro de organizações com atributo `tipo` (`privada` | `comercial`) — define o modelo de cobrança
+- Cadastro de unidades (rede privada) e vínculo `membro` ↔ `unidade`
 
 ### 📍 Fase 2 — Localização & descoberta
 
 Mapa de pontos e estratégia de cobertura.
 
 - Integração com API de mapas (Google Maps / Mapbox)
-- Mapa do app: pontos próximos, status, tipo (venda/condomínio) e preço estimado
-- Critério de localização para pontos de venda: fluxo de veículos + demanda regional + dados públicos (ABVE, ANEEL)
+- Mapa do app: pontos próximos, status, tipo (privada/comercial) e preço estimado
+- Critério de localização para pontos comerciais: fluxo de veículos + demanda regional + dados públicos (ABVE, ANEEL)
 
 ### ⚡ Fase 3 — Jornada de recarga
 
-Sessão completa, do toque do morador ao débito automático.
+Sessão completa, do toque do motorista ao débito automático.
 
 - Integração ao carregador via **API SEMS Portal** (ou mock para desenvolvimento) — autenticação `CrossLogin`, status, telemetria
 - Login → escolha do ponto → **pré-autorização Stripe** → liberação remota (**SEMS Remote Control**)
@@ -382,8 +446,8 @@ Régua transparente para girar a vaga com justiça.
 
 Cobrança, rateio e inteligência de precificação.
 
-- **Híbrido (Grupo A):** taxa de acesso mensal + repasse de kWh sem margem; portal exporta relatório por unidade para boleto condominial
-- **Pré-pago (Grupo B):** sessão cobrada via Stripe + NFS-e automática
+- **Rede privada:** taxa de acesso mensal + repasse de kWh sem margem; portal exporta relatório por unidade para cobrança (cartão ou boleto)
+- **Rede comercial:** sessão cobrada via Stripe + NFS-e automática
 - IA: precificação dinâmica (`fator_demanda`) + previsão de capacidade
 - Portal: relatório por unidade, exportação PDF/CSV, fechamento mensal
 
@@ -399,8 +463,8 @@ Backend · PostgreSQL · Redis · App mobile · Portal web · scikit-learn (IA) 
 - [ ] Sessão completa com telemetria em tempo real
 - [ ] Notificações: −15 min, conclusão e início da multa
 - [ ] Tolerância de 10 min + cobrança proporcional pela ocupação
-- [ ] Híbrido (condomínio): taxa de acesso + repasse de kWh + relatório por unidade
-- [ ] Pré-pago (rede comercial): captura via Stripe + NFS-e
+- [ ] Rede privada: taxa de acesso + repasse de kWh + relatório por unidade
+- [ ] Rede comercial: captura via Stripe + NFS-e
 - [ ] Painel de capacidade elétrica com alerta de upgrade
 - [ ] Pelo menos um modelo de IA em produção (precificação ou anomalias)
 
@@ -411,7 +475,7 @@ Backend · PostgreSQL · Redis · App mobile · Portal web · scikit-learn (IA) 
 **Regulação federal:**
 - ANEEL. [Veículos Elétricos](https://www.gov.br/aneel/pt-br/assuntos/veiculos-eletricos) e [RN 1.000/2021](https://www2.aneel.gov.br/cedoc/ren20211000.html) (Cap. V — Estações de recarga; art. 2º, XV)
 - ANEEL. [Consulta Pública 42/2025](https://www.gov.br/aneel/pt-br/assuntos/noticias/2025/aneel-abre-consulta-publica-para-aprimorar-regras-de-conexao-de-eletromobilidade-a-rede-eletrica) (regras de conexão de eletromobilidade — em formação)
-- Lei nº 14.874/2024 (federal) · ABNT NBR 17019:2022
+- ABNT NBR 17019:2022
 - [PL 158/2025](https://www.camara.leg.br/proposicoesWeb/fichadetramitacao?idProposicao=2482575) (Câmara dos Deputados — base federal de condomínio, aguardando CCJC)
 
 **Regulação estadual e municipal (SP):**
